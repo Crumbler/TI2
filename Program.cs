@@ -1,22 +1,11 @@
 ﻿using System;
 using System.Numerics;
+using System.Text;
 
 namespace TI2
 {
     public static class Program
     {
-        private static BigInteger gcd(BigInteger a, BigInteger b)
-        {
-            while (b != 0)
-            {
-                BigInteger t = b;
-                b = a % b;
-                a = t;
-            }
-
-            return a;
-        }
-
         private static (BigInteger, BigInteger, BigInteger) ExtGcd(BigInteger a, BigInteger b)
         {
             if (a < b)
@@ -26,19 +15,19 @@ namespace TI2
                 a = tmp;
             }
 
-            if (b == 0)
+            if (b.IsZero)
                 return (a, 1, 0);
-
+            
             BigInteger x2 = 1,
                        x1 = 0,
                        y2 = 0,
                        y1 = 1,
-                       x, y;
+                       x, y, q, r;
 
-            while (b > 0)
+            while (b.Sign > 0)
             {
-                BigInteger q = a / b;
-                BigInteger r = a - q * b;
+                q = a / b;
+                r = a - q * b;
                 x = x2 - q * x1;
                 y = y2 - q * y1;
 
@@ -87,7 +76,7 @@ namespace TI2
             var res = ExtGcd(e, phi);
 
             BigInteger d = res.Item3;
-            if (d < 0)
+            if (d.Sign < 0)
                 d = res.Item2;
 
             Console.WriteLine($"The public key is  ({d}, {n})");
@@ -98,12 +87,52 @@ namespace TI2
 
         private static void Encrypt()
         {
+            Console.WriteLine("Enter e");
+            var e = BigInteger.Parse(Console.ReadLine());
 
+            Console.WriteLine("Enter n");
+            var n = BigInteger.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter the message to encrypt");
+            string message = Console.ReadLine();
+            var msg = new BigInteger(Encoding.ASCII.GetBytes(message));
+
+            if (msg >= n)
+            {
+                Console.WriteLine("Error: Message isn't less than n");
+                return;
+            }
+
+            msg = fastexp(msg, e, n);
+
+            Console.WriteLine("The encrypted message:");
+            Console.Write(msg);
+            Console.WriteLine('|');
         }
 
         private static void Decrypt()
         {
+            Console.WriteLine("Enter d");
+            var d = BigInteger.Parse(Console.ReadLine());
 
+            Console.WriteLine("Enter n");
+            var n = BigInteger.Parse(Console.ReadLine());
+
+            Console.WriteLine("Enter the message to decrypt");
+            string message = Console.ReadLine();
+            var msg = BigInteger.Parse(message);
+
+            if (msg >= n)
+            {
+                Console.WriteLine("Error: Message isn't less than n");
+                return;
+            }
+
+            msg = fastexp(msg, d, n);
+
+            Console.WriteLine("The decrypted message:");
+            Console.Write(Encoding.ASCII.GetString(msg.ToByteArray()));
+            Console.WriteLine('|');
         }
 
         public static void Main()
