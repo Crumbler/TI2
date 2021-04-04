@@ -9,7 +9,9 @@
                 "build",
                 "${workspaceFolder}/TI2.csproj",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "/consoleloggerparameters:NoSummary",
+                "--output",
+                "${workspaceFolder}/bin/"
             ],
             "problemMatcher": "$msCompile"
         },
