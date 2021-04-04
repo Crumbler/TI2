@@ -4,11 +4,11 @@ namespace TI2
 {
     public static class Program
     {
-        private static ulong gcd(ulong a, ulong b)
+        private static long gcd(long a, long b)
         {
             while (b != 0)
             {
-                ulong t = b;
+                long t = b;
                 b = a % b;
                 a = t;
             }
@@ -16,11 +16,11 @@ namespace TI2
             return a;
         }
 
-        private static (ulong, ulong, ulong) ExtGcd(ulong a, ulong b)
+        private static (long, long, long) ExtGcd(long a, long b)
         {
             if (a < b)
             {
-                ulong tmp = b;
+                long tmp = b;
                 b = a;
                 a = tmp;
             }
@@ -28,7 +28,7 @@ namespace TI2
             if (b == 0)
                 return (a, 1, 0);
 
-            ulong x2 = 1,
+            long x2 = 1,
                   x1 = 0,
                   y2 = 0,
                   y1 = 1,
@@ -36,8 +36,8 @@ namespace TI2
 
             while (b > 0)
             {
-                ulong q = a / b;
-                ulong r = a - q * b;
+                long q = a / b;
+                long r = a - q * b;
                 x = x2 - q * x1;
                 y = y2 - q * y1;
 
@@ -52,9 +52,9 @@ namespace TI2
             return (a, x2, y2);
         }
 
-        private static ulong fastexp(ulong a, ulong z, ulong m)
+        private static long fastexp(long a, long z, long m)
         {
-            ulong x = 1;
+            long x = 1;
 
             for (; z != 0; --z)
             {
@@ -73,13 +73,25 @@ namespace TI2
         private static void GenKey()
         {
             Console.WriteLine("Enter p, q and e");
-            ulong p, q, e;
-            p = ulong.Parse(Console.ReadLine());
-            q = ulong.Parse(Console.ReadLine());
-            e = ulong.Parse(Console.ReadLine());
 
-            ulong n = p * q;
-            ulong phi = (p - 1) * (q - 1);
+            long p, q, e;
+            p = long.Parse(Console.ReadLine());
+            q = long.Parse(Console.ReadLine());
+            e = long.Parse(Console.ReadLine());
+
+            long n = p * q;
+            long phi = (p - 1) * (q - 1);
+
+            var res = ExtGcd(e, phi);
+
+            long d = res.Item3;
+            if (d < 0)
+                d = res.Item2;
+
+            Console.WriteLine($"The public key is  ({d}, {n})");
+            Console.WriteLine($"The private key is ({e}, {n})");
+
+            Console.WriteLine(res);
         }
 
         private static void Encrypt()
@@ -94,10 +106,6 @@ namespace TI2
 
         public static void Main()
         {
-            var res = ExtGcd(10, 5);
-
-            Console.WriteLine(res);
-
             while(true)
             {
                 Console.WriteLine("1) Generate key");
