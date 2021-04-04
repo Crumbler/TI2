@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Numerics;
 
 namespace TI2
 {
     public static class Program
     {
-        private static long gcd(long a, long b)
+        private static BigInteger gcd(BigInteger a, BigInteger b)
         {
             while (b != 0)
             {
-                long t = b;
+                BigInteger t = b;
                 b = a % b;
                 a = t;
             }
@@ -16,11 +17,11 @@ namespace TI2
             return a;
         }
 
-        private static (long, long, long) ExtGcd(long a, long b)
+        private static (BigInteger, BigInteger, BigInteger) ExtGcd(BigInteger a, BigInteger b)
         {
             if (a < b)
             {
-                long tmp = b;
+                BigInteger tmp = b;
                 b = a;
                 a = tmp;
             }
@@ -28,16 +29,16 @@ namespace TI2
             if (b == 0)
                 return (a, 1, 0);
 
-            long x2 = 1,
-                  x1 = 0,
-                  y2 = 0,
-                  y1 = 1,
-                  x, y;
+            BigInteger x2 = 1,
+                       x1 = 0,
+                       y2 = 0,
+                       y1 = 1,
+                       x, y;
 
             while (b > 0)
             {
-                long q = a / b;
-                long r = a - q * b;
+                BigInteger q = a / b;
+                BigInteger r = a - q * b;
                 x = x2 - q * x1;
                 y = y2 - q * y1;
 
@@ -52,15 +53,16 @@ namespace TI2
             return (a, x2, y2);
         }
 
-        private static long fastexp(long a, long z, long m)
+        private static BigInteger fastexp(BigInteger a, BigInteger z, BigInteger m)
         {
-            long x = 1;
+            BigInteger x = 1;
 
-            for (; z != 0; --z)
+            for (; !z.IsZero; --z)
             {
-                while (z % 2 == 0)
+                while (z.IsEven)
                 {
                     z /= 2;
+                    
                     a = (a * a) % m;
                 }
 
@@ -74,17 +76,17 @@ namespace TI2
         {
             Console.WriteLine("Enter p, q and e");
 
-            long p, q, e;
-            p = long.Parse(Console.ReadLine());
-            q = long.Parse(Console.ReadLine());
-            e = long.Parse(Console.ReadLine());
+            BigInteger p, q, e;
+            p = BigInteger.Parse(Console.ReadLine());
+            q = BigInteger.Parse(Console.ReadLine());
+            e = BigInteger.Parse(Console.ReadLine());
 
-            long n = p * q;
-            long phi = (p - 1) * (q - 1);
+            BigInteger n = p * q;
+            BigInteger phi = (p - 1) * (q - 1);
 
             var res = ExtGcd(e, phi);
 
-            long d = res.Item3;
+            BigInteger d = res.Item3;
             if (d < 0)
                 d = res.Item2;
 
